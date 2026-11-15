@@ -218,3 +218,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# devenv state
+.devenv
+.direnv
+.pre-commit-config.yaml
+.prettierignore
+
+# uv lock is committed (see pyproject.toml); venv is not
+# (devenv owns it under .devenv/state/venv)
+
+# testmon scoped-run baseline
+.testmondata

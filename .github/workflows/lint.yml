@@ -1,0 +1,80 @@
+# Lint + complexity + format gates.
+#
+# Split out of ci.yml so a lint failure reports as its own check:
+# it can neither mask the unit-test result nor be masked by it, and
+# both run in parallel. The ruff and xenon steps keep their
+# targeted failure names; the hook-suite step runs the full
+# pre-commit suite — the same .pre-commit-config.yaml devenv.nix
+# generates and `git commit` enforces — so a push whose commits
+# bypassed the hooks (or landed before a new one) still meets every
+# gate in CI.
+name: Lint
+
+# Every file type is gated by some hook (markdownlint and prettier
+# read docs/*.md, nixfmt reads devenv.nix, shfmt/shellcheck read
+# scripts/), so no path filters here: every push runs. ci.yml keeps
+# its .md ignore — the unit tests do not read Markdown.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: devenv
+
+      # Pinned release, not the moving default registry: the devenv
+      # that evaluates the 2.x tasks syntax and parses -O is the one
+      # moving part otherwise — an upstream break would red CI with
+      # no repo change.
+      - name: Install devenv.sh
+        run: nix profile add github:cachix/devenv/v2.3.1
+
+      - name: Lint (ruff check + format)
+        env:
+          TMPDIR: /tmp
+        run: >-
+          devenv --quiet -O dotenv.enable:bool false shell --
+          bash -c 'ruff check src/ scripts/ && ruff format --check src/ scripts/'
+
+      - name: Complexity gate (xenon rank A)
+        env:
+          TMPDIR: /tmp
+        run: >-
+          devenv --quiet -O dotenv.enable:bool false shell --
+          lamidos-xenon
+
+      # The full pre-commit suite: deferred-imports, shfmt,
+      # shellcheck, markdownlint, actionlint, trufflehog, nixfmt,
+      # check-toml, yamllint, prettier, jscpd (ruff and xenon run
+      # in their own steps above and again here).
+      # devenv:git-hooks:run is pre-commit run --all-files over the
+      # generated config — the one definition, shared with the
+      # commit-time hook. Write-mode hooks (prettier/nixfmt/shfmt/
+      # ruff format) only "fail" in CI when a tracked file is not
+      # formatted; the runner tree is disposable. trufflehog scans
+      # the file set itself for verifiable live credentials.
+      - name: Pre-commit hook suite
+        env:
+          TMPDIR: /tmp
+        run: >-
+          devenv --quiet -O dotenv.enable:bool false shell --
+          devenv tasks run devenv:git-hooks:run
