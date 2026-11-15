@@ -35,7 +35,7 @@ while IFS= read -r f; do
   files+=("$f")
 done < <(git ls-files --cached --others --exclude-standard 'src/lamidos/lamidos/*.py')
 if [ "${#files[@]}" -eq 0 ]; then
-  echo "jscpd-gate: no backend .py files found — run from the repo root" >&2
+  echo "jscpd-gate: no package .py files found — run from the repo root" >&2
   exit 1
 fi
 

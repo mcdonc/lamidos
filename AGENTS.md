@@ -16,9 +16,11 @@ devenv --quiet -O dotenv.enable:bool false shell -- unit-tests
 ```
 
 The flags: `--quiet` suppresses noisy devenv output; `-O
-dotenv.enable:bool false` prevents devenv from loading `.env`
-(which can interfere with test environments that set their own env
-vars via monkeypatch). `shell --` launches an ephemeral shell with
+dotenv.enable:bool false` is a guard — this repo does not enable
+devenv's dotenv integration, and the override keeps any stray
+`.env` file (or a future `dotenv.enable = true`) from leaking
+variables into test runs that set their own env via monkeypatch.
+`shell --` launches an ephemeral shell with
 the full environment, runs the command, and exits — this is the
 pattern agents should use for one-off commands. (`devenv shell`
 with no `--` drops into an interactive shell; not useful for

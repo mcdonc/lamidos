@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Module-length gate (#863): no module under the shipped package
-# past the ceiling. The gate does one thing — it fails, naming the
+# Module-length gate (ported from msks #863): no module under the
+# shipped package past the ceiling. The gate does one thing — it fails, naming the
 # file and its line count. It never edits, splits, or suggests:
 # the remedy is the agent's, and AGENTS.md's "Lines gate" section
 # carries the hint (split the module into a package along its
