@@ -11,8 +11,8 @@ Python venv, ruff, pre-commit hooks, etc. — only exists inside the
 shell.
 
 ```bash
-devenv --quiet -- git commit -m "..."
-devenv --quiet -- unit-tests
+devenv --quiet -O dotenv.enable:bool false shell -- git commit -m "..."
+devenv --quiet -O dotenv.enable:bool false shell -- unit-tests
 ```
 
 The flags: `--quiet` suppresses noisy devenv output; `-O
@@ -95,7 +95,11 @@ harness's own contract, not a swallow.
 ## Coverage gates
 
 Local `unit-tests` reproduces the CI coverage gate exactly at the
-same tree. Run it on the tree being pushed: commit first, or
+same tree. The suite runs under pytest-xdist (`-n auto`) with the
+sysmon coverage core (`conftest.py` pins `COVERAGE_CORE=sysmon`):
+a single-process run under-counts branch coverage on 3.14, so
+always read the parallel run's total. Run it on the tree being
+pushed: commit first, or
 confirm `git status --porcelain` is empty. Any change after the
 last run — including a post-review `--amend` — requires re-running
 it. If CI reports a gap local runs missed, the gap is real: check
@@ -118,7 +122,8 @@ cycle (`scripts/check_import_cycles.py`), every import-graph gate
 violation (`scripts/check_import_graph.py` over `import-graph.toml`
 — package DAG, ranks, snapshot counts, fan-in ceiling,
 reachability, facades), every xenon block above rank A, the jscpd
-clone report over the full tree, and every module-length offender.
+clone report over the package sources, and every module-length
+offender.
 When anything under `src/lamidos/` differs from the fork point on
 `origin/main` (committed or working tree), it then runs the gated
 suite — the `unit-tests` suite under the same coverage gate, with

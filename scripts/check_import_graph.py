@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Import-graph gates over the daemon sources (AGENTS.md).
+"""Import-graph gates over the package sources (AGENTS.md).
 
 Six rules over the same AST walk ``scripts/check_import_cycles.py``
 performs, each driven by ``import-graph.toml`` at the repo root —

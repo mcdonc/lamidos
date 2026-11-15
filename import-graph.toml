@@ -6,8 +6,10 @@
 # test_import_graph.py). Widening anything below is a deliberate
 # edit: the diff states why.
 
-# Ceiling of distinct importers per module; only goes down.
-fan_in_ceiling = 12
+# Ceiling of distinct importers per module; only goes down. Seeded
+# at 5 — tighter than msks's 12 — so the split-what-everyone-imports
+# pressure binds early in a codebase meant to stay small.
+fan_in_ceiling = 5
 
 # Production entry points (pyproject [project.scripts] plus every
 # `python -m` entry). Every module under src/lamidos/lamidos must

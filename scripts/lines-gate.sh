@@ -18,9 +18,8 @@
 #   defaults to ROOT/scripts/lines-exemptions.txt; a missing file
 #   reads as the empty list. The commit hook, ``lamidos-preflight``,
 #   and the ``lamidos-lines`` devenv script run this script with no
-#   arguments; the suite's tests point both knobs at throwaway
-#   trees to pin the boundary (bash 3.2 compatible — no mapfile,
-#   no associative arrays, macOS hosts included).
+#   arguments (bash 3.2 compatible — no mapfile, no associative
+#   arrays, macOS hosts included).
 #
 # Paths parse at the first whitespace, so a path containing a
 # space never matches an entry and fails as an offender — the

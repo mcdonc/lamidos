@@ -32,8 +32,7 @@ PKG_ROOT = REPO_ROOT / "src" / "lamidos" / "lamidos"
 
 def module_of(path: Path) -> tuple[str, ...] | None:
     """The dotted module path for a file under PKG_ROOT, or None
-    for a file outside the package's __init__.py chains (the
-    alembic tree loads by exec, outside the import system)."""
+    for a file outside the package's __init__.py chains."""
     top = None
     cur = path.parent
     while (cur / "__init__.py").is_file():

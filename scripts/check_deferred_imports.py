@@ -128,8 +128,8 @@ def parse_file(filepath: Path):
     """Parse a file and annotate parent nodes. Returns (tree, lines),
     or an error string the caller reports loudly — a file the gate's
     own interpreter cannot parse is never silently skipped (the
-    xenon-gate rule, #3415: a silent skip turns the gate off for that
-    file while everything stays green)."""
+    xenon-gate rule, ported from klangk #3415: a silent skip turns
+    the gate off for that file while everything stays green)."""
     try:
         source_text = filepath.read_text()
         tree = ast.parse(source_text)

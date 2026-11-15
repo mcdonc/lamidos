@@ -235,7 +235,9 @@ in
     # require_serial: one invocation with all files —
     # pass_filenames maps them to package roots, and chunked
     # invocations would rescan (and re-print) the same packages
-    # once per chunk.
+    # once per chunk. Non-package files (scripts/, tests/) map to
+    # no package root and are skipped by design — the msks
+    # semantics; xenon still grades scripts/*.py.
     deferred-imports = {
       enable = true;
       name = "deferred-imports";

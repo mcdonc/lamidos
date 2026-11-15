@@ -230,3 +230,8 @@ __marimo__/
 
 # testmon scoped-run baseline
 .testmondata
+
+# Worktrees live in the repo root's .worktrees/ (AGENTS.md); other
+# checkouts' in-progress files must stay out of the unanchored
+# *.py globs the ruff and deferred-imports gates grade.
+.worktrees/
